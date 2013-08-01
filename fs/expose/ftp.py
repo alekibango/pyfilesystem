@@ -232,7 +232,7 @@ class FTPFS(ftpserver.AbstractedFS):
         return True
 
 
-class FTPFSHandler(ftpserver.FTPHandler):
+class FTPFSHandler(ftpserver.FTPHandler, object):
     """
     An FTPHandler class that closes the filesystem when done.
     """
