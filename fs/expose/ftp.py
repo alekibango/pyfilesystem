@@ -11,7 +11,8 @@ To use this in combination with fsserve, do the following:
 
 $ fsserve -t 'ftp' $HOME
 
-The above will serve your home directory in read-only mode via anonymous FTP on the
+The above will serve your home directory in read-only mode
+via anonymous FTP on the
 loopback address.
 """
 
@@ -39,8 +40,8 @@ GID = os.getgid()
 def decode_args(f):
     """
     Decodes string arguments using the decoding defined on the method's class.
-    This decorator is for use on methods (functions which take a class or instance
-    as the first parameter).
+    This decorator is for use on methods (functions which take a class
+    or instance as the first parameter).
 
     Pyftpdlib (as of 0.7.0) uses str internally, so this decoding is necessary.
     """
@@ -72,8 +73,9 @@ class FakeStat(object):
 
 class FTPFS(ftpserver.AbstractedFS):
     """
-    The basic FTP Filesystem. This is a bridge between a pyfs filesystem and pyftpdlib's
-    AbstractedFS. This class will cause the FTP server to serve the given fs instance.
+    The basic FTP Filesystem. This is a bridge between a pyfs filesystem
+    and pyftpdlib's AbstractedFS. This class will cause the FTP
+    server to serve the given fs instance.
     """
     encoding = 'utf8'
     "Sets the encoding to use for paths."
@@ -163,8 +165,8 @@ class FTPFS(ftpserver.AbstractedFS):
         kwargs = {
             'st_size': info.get('size'),
         }
-        # Give the fs a chance to provide the uid/gid. Otherwise echo the current
-        # uid/gid.
+        # Give the fs a chance to provide the uid/gid.
+        # Otherwise echo the current uid/gid.
         kwargs['st_uid'] = info.get('st_uid', UID)
         kwargs['st_gid'] = info.get('st_gid', GID)
         if 'st_atime' in info:
@@ -191,8 +193,9 @@ class FTPFS(ftpserver.AbstractedFS):
         else:
             # Otherwise, build one. Not executable by default.
             mode = 0660
-            # Merge in the type (dir or file). File is tested first, some file systems
-            # such as ArchiveMountFS treat archive files as directories too. By checking
+            # Merge in the type (dir or file).
+            # File is tested first, some file systems such as ArchiveMountFS
+            # treat archive files as directories too. By checking
             # file first, any such files will be only files (not directories).
             if self.fs.isfile(path):
                 mode |= stat.S_IFREG
@@ -260,8 +263,9 @@ class FTPFSFactory(object):
 
     def __call__(self, root, cmd_channel):
         """
-        This is the entry point of pyftpdlib. We will pass along the two parameters
-        as well as the previously provided fs instance and encoding.
+        This is the entry point of pyftpdlib.
+        We will pass along the two parameters as well as the previously
+        provided fs instance and encoding.
         """
         return FTPFS(self.fs, root, cmd_channel, encoding=self.encoding)
 
@@ -272,18 +276,18 @@ class HomeFTPFS(FTPFS):
     """
     def __init__(self, root, cmd_channel):
         """
-        Use the provided user's home directory to create an FTPFS that serves an OSFS
-        rooted at the home directory.
+        Use the provided user's home directory to create
+        an FTPFS that serves an OSFS rooted at the home directory.
         """
         super(DemoFS, self).__init__(OSFS(root_path=root), '/', cmd_channel)
 
 
 def serve_fs(fs, addr, port):
     """
-    Creates a basic anonymous FTP server serving the given FS on the given address/port
-    combo.
+    Creates a basic anonymous FTP server serving the given FS
+    on the given address/port combo.
     """
-    from pyftpdlib.contrib.authorizers import UnixAuthorizer
+    # from pyftpdlib.contrib.authorizers import UnixAuthorizer
     ftp_handler = FTPFSHandler
     ftp_handler.authorizer = ftpserver.DummyAuthorizer()
     ftp_handler.authorizer.add_anonymous('/')
